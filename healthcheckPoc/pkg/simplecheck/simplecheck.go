@@ -3,8 +3,8 @@ package simplecheck
 import (
 	"context"
 
-	"github.com/ziyue-101/playground/healthcheckPoc/checker"
-	"github.com/ziyue-101/playground/healthcheckPoc/manager"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/checker"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/cluster"
 
 	"k8s.io/client-go/rest"
 )
@@ -27,7 +27,7 @@ func NewSimpleHealthChecker(cm checker.CheckerMeta, shc SimpleHealthCheck) check
 // User defined health check logic.
 type SimpleHealthCheck func(ctx context.Context, config *rest.Config) error
 
-func (shc simpleHealthChecker) Check(ctx context.Context, mgr manager.Manager) error {
-	shc.logic(ctx, mgr.GetRestConfig(ctx))
+func (shc simpleHealthChecker) Check(ctx context.Context, c cluster.Cluster) error {
+	shc.logic(ctx, c.Config)
 	return nil
 }

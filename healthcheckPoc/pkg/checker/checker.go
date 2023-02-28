@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	manager "github.com/ziyue-101/playground/healthcheckPoc/manager"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/cluster"
 )
 
 // Check is a health check func that the framework will initialize at runtime for a HealthChecker.
 type HealthCheckerInterface interface {
-	Check(ctx context.Context, mgr manager.ManagerInterface) error
+	Check(ctx context.Context, c cluster.Cluster) error
 }
 
 type ErrorType string

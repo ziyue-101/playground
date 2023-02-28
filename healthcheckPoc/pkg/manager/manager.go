@@ -3,12 +3,14 @@ package manager
 import (
 	"context"
 
-	"github.com/ziyue-101/playground/healthcheckPoc/checker"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/checker"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/cluster"
 	"k8s.io/client-go/rest"
 )
 
-func NewManager(name string, config *rest.Config) (Manager, error) {
-	return Manager{config: config}, nil
+func NewManager(name string, cfg *rest.Config) (Manager, error) {
+	c := cluster.Cluster{Config: cfg}
+	return Manager{Cluster: c}, nil
 }
 
 type ManagerInterface interface {
@@ -23,18 +25,15 @@ type ManagerInterface interface {
 
 // Manager is a health check manager.
 type Manager struct {
-	config   *rest.Config
+	Cluster  cluster.Cluster
 	checkers []checker.HealthCheckerInterface
-}
-
-func (mgr *Manager) GetRestConfig(ctx context.Context) *rest.Config {
-	return mgr.config
 }
 
 func (mgr *Manager) StartAllChecks(ctx context.Context) error {
 	for _, checker := range mgr.checkers {
-		checker.Check(ctx, mgr.config)
+		checker.Check(ctx, mgr.Cluster)
 	}
+	return nil
 }
 
 func (mgr *Manager) RegisterHealthChecker(healthChecker checker.HealthCheckerInterface) error {

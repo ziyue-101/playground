@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ziyue-101/playground/healthcheckPoc/checker"
-	"github.com/ziyue-101/playground/healthcheckPoc/manager"
-	"github.com/ziyue-101/playground/healthcheckPoc/simplecheck"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/checker"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/manager"
+	"github.com/ziyue-101/playground/healthcheckPoc/pkg/simplecheck"
 	"k8s.io/client-go/rest"
 )
 
 func main() {
 
-	mgr := manager.NewManager("fooMgr", rest.Config{})
+	mgr, _ := manager.NewManager("fooMgr", &rest.Config{})
 	cm := checker.CheckerMeta{
 		Name:      "foo/api",
 		Namespace: "foo-monitoring",
@@ -27,5 +27,5 @@ func main() {
 	}
 	simpleChecker := simplecheck.NewSimpleHealthChecker(cm, simplelogic)
 	mgr.RegisterHealthChecker(simpleChecker)
-	mgr.StartAllChecks()
+	mgr.StartAllChecks(context.Background())
 }
